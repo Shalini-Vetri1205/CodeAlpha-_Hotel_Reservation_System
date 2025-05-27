@@ -1,0 +1,109 @@
+import java.util.*;
+
+public class HotelReservationSystem {
+
+    static class Room {
+        int roomNumber;
+        String type;
+        boolean isBooked;
+
+        public Room(int roomNumber, String type) {
+            this.roomNumber = roomNumber;
+            this.type = type;
+            this.isBooked = false;
+        }
+
+        @Override
+        public String toString() {
+            return "Room " + roomNumber + " (" + type + ") - " + (isBooked ? "Booked" : "Available");
+        }
+    }
+
+    static class Reservation {
+        String guestName;
+        Room room;
+
+        public Reservation(String guestName, Room room) {
+            this.guestName = guestName;
+            this.room = room;
+        }
+
+        @Override
+        public String toString() {
+            return guestName + " has reserved Room " + room.roomNumber + " (" + room.type + ")";
+        }
+    }
+
+    static class Hotel {
+        List<Room> rooms = new ArrayList<>();
+        List<Reservation> reservations = new ArrayList<>();
+
+        public void addRoom(int roomNumber, String type) {
+            rooms.add(new Room(roomNumber, type));
+        }
+
+        public void viewRooms() {
+            System.out.println("Room List:");
+            for (Room r : rooms) {
+                System.out.println(r);
+            }
+        }
+
+        public void viewReservations() {
+            System.out.println("Reservations:");
+            for (Reservation r : reservations) {
+                System.out.println(r);
+            }
+        }
+
+        public boolean bookRoom(String guestName, String type) {
+            for (Room r : rooms) {
+                if (!r.isBooked && r.type.equalsIgnoreCase(type)) {
+                    r.isBooked = true;
+                    reservations.add(new Reservation(guestName, r));
+                    System.out.println("Room " + r.roomNumber + " booked successfully for " + guestName);
+                    return true;
+                }
+            }
+            System.out.println("No available rooms of type " + type);
+            return false;
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Hotel hotel = new Hotel();
+
+        // Add some rooms
+        hotel.addRoom(101, "Single");
+        hotel.addRoom(102, "Double");
+        hotel.addRoom(201, "Single");
+        hotel.addRoom(202, "Suite");
+
+        while (true) {
+            System.out.println("\n--- Hotel Reservation System ---");
+            System.out.println("1. View Rooms\n2. Book Room\n3. View Reservations\n4. Exit");
+            System.out.print("Choose option: ");
+            int choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+                case 1 -> hotel.viewRooms();
+                case 2 -> {
+                    System.out.print("Enter guest name: ");
+                    String name = sc.nextLine();
+                    System.out.print("Enter room type (Single/Double/Suite): ");
+                    String type = sc.nextLine();
+                    hotel.bookRoom(name, type);
+                }
+                case 3 -> hotel.viewReservations();
+                case 4 -> {
+                    System.out.println("Thank you for using the Hotel Reservation System!");
+                    sc.close();
+                    return;
+                }
+                default -> System.out.println("Invalid option.");
+            }
+        }
+    }
+}
